@@ -1,0 +1,14 @@
+2020-09-29 3:05:29 PM - Current balance: 200
+2020-09-29 3:05:29 PM - Deposit 300, new balance: 500
+2020-09-29 3:05:36 PM - Current balance: 500
+2020-09-29 3:05:36 PM - Withdraw 500, new balance: 0
+2020-09-29 3:05:38 PM - Current balance: 0
+2020-09-29 3:05:38 PM - Deposit 120, new balance: 120
+2020-09-29 3:05:40 PM - Current balance: 120
+2020-09-29 3:05:40 PM - Withdraw 100, new balance: 20
+2020-09-29 3:05:42 PM - Current balance: 20
+2020-09-29 3:05:42 PM - Operation rejected
+2020-09-29 3:05:46 PM - Current balance: 20
+2020-09-29 3:05:46 PM - Deposit 90, new balance: 110
+2020-09-29 3:05:47 PM - Current balance: 110
+2020-09-29 3:05:47 PM - Withdraw 100, new balance: 10
