@@ -1,6 +1,7 @@
 module Capstone3.Operations
 
 open System
+
 open Capstone3.Domain
 
 /// Withdraws an amount of an account (if there are sufficient funds)
@@ -21,23 +22,13 @@ let auditAs operationName audit operation amount account =
     let audit =
         audit account.AccountId account.Owner.Name
 
-    let transaction =
-        { Operation = operationName
-          Amount = amount
-          TimeStamp = DateTime.UtcNow
-          IsSuccessful = false }
-
+    audit (sprintf "%O: Performing a %s operation for £%M..." DateTime.UtcNow operationName amount)
     let updatedAccount = operation amount account
 
     let accountIsUnchanged = (updatedAccount = account)
 
     if accountIsUnchanged
-    then audit transaction
-    else audit { transaction with IsSuccessful = true }
+    then audit (sprintf "%O: Transaction rejected!" DateTime.UtcNow)
+    else audit (sprintf "%O: Transaction accepted! Balance is now £%M." DateTime.UtcNow updatedAccount.Balance)
 
     updatedAccount
-
-let serialized transaction =
-    sprintf "%O***%A***%M***%b" transaction.TimeStamp transaction.Operation transaction.Amount transaction.IsSuccessful
-
-let loadAccount owner accountId transactions = "a"

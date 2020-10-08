@@ -2,11 +2,12 @@
 #load "Operations.fs"
 #load "FileRepository.fs"
 
+open System
+open System.IO
+
 open Capstone3.Operations
 open Capstone3.Domain
 open Capstone3.FileRepository
-open System
-open System.IO
 
 let openingAccount =
     { Owner = { Name = "Isaac" }
@@ -60,29 +61,3 @@ commands
 |> Seq.takeWhile (not << isStopCommand)
 |> Seq.map getAmount
 |> Seq.fold processCommand openingAccount
-
-let loadAccount owner accountId transactions = "a"
-
-buildPath ("Sam", Guid.Empty)
-
-let deserialized (transaction: string) =
-    let [| timeStamp; operation; amount; success |] = transaction.Split("***")
-    { Operation = Char.Parse(operation.Substring(1, 1))
-      Amount = Decimal.Parse(amount)
-      TimeStamp = DateTime.Parse(timeStamp)
-      IsSuccessful = bool.Parse(success) }
-
-let transactionToOperation transaction =
-    (transaction.Operation, transaction.Amount)
-
-
-Directory.EnumerateFiles(Path.Combine("src\\capstone-3", buildPath ("Sam", Guid.Empty)), "*.txt")
-|> Seq.map (FileInfo >> (fun x -> x.FullName))
-|> Seq.sort
-|> Seq.map
-    (File.ReadAllText
-     >> deserialized
-     >> transactionToOperation)
-|> Seq.fold processCommand openingAccount
-
-findTransactionsOnDisk "Sam"

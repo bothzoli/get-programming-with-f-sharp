@@ -8,9 +8,3 @@ type Account =
     { AccountId: Guid
       Owner: Customer
       Balance: decimal }
-
-type Transaction =
-    { Operation: char
-      Amount: decimal
-      TimeStamp: DateTime
-      IsSuccessful: bool }
