@@ -145,3 +145,40 @@ let numberOne =
     |> List.toArray
     |> Seq.ofArray
     |> Seq.head
+
+open System.IO
+
+Directory.GetFiles("./") |> Array.map FileInfo
+
+type FileInformation =
+    { Name: string
+      Length: int64
+      DirectoryName: string
+      Extension: string }
+
+let isDirectory path =
+    File.GetAttributes(path).HasFlag(FileAttributes.Directory)
+
+let getFileInfo path =
+    let fileInfo = FileInfo(path)
+    [ { Name = fileInfo.Name
+        Length = fileInfo.Length
+        DirectoryName = fileInfo.DirectoryName
+        Extension = fileInfo.Extension } ]
+
+getFileInfo ("./README.md")
+
+
+let rec getFilesInDirectory path =
+    Directory.GetFileSystemEntries(path)
+    |> Array.toList
+    |> List.collect (fun f -> if f |> isDirectory then f |> getFilesInDirectory else f |> getFileInfo)
+
+let sumFileLength fileList =
+    fileList |> List.sumBy (fun f -> f.Length)
+
+getFilesInDirectory ("./src")
+|> List.groupBy (fun f -> f.DirectoryName)
+|> List.map (fun (dirname, files) -> dirname, files.Length, (files |> sumFileLength))
+|> List.sortByDescending (fun (_, _, size) -> size)
+|> List.map (fun (dirname, count, size) -> sprintf "%s is %d files %d Bytes" dirname count size)
