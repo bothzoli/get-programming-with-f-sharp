@@ -14,7 +14,8 @@ let openingAccount =
       Balance = 0M
       AccountId = Guid.Empty }
 
-let isValidCommand char = char = 'd' || char = 'w' || char = 'x'
+let isValidCommand command =
+    [ 'd'; 'w'; 'x' ] |> Seq.contains command
 
 isValidCommand 'd'
 isValidCommand 'w'
@@ -23,15 +24,15 @@ isValidCommand 'f'
 isValidCommand 'g'
 
 
-let isStopCommand char = char = 'x'
+let isStopCommand command = command = 'x'
 
 isStopCommand 'x'
 isStopCommand 'd'
 
 
-let getAmount char =
-    if char = 'd' then char, 50M
-    elif char = 'w' then char, 25M
+let getAmount command =
+    if command = 'd' then command, 50M
+    elif command = 'w' then command, 25M
     else 'x', 0M
 
 getAmount 'd'
@@ -39,10 +40,10 @@ getAmount 'w'
 getAmount 'x'
 getAmount 'q'
 
-let getAmountConsole char =
+let getAmountConsole command =
     Console.Write "Enter amount: "
     let amount = Console.ReadLine() |> Decimal.Parse
-    (char, amount)
+    (command, amount)
 
 getAmountConsole 'd'
 
@@ -51,7 +52,7 @@ let processCommand account (command, amount) =
     elif command = 'w' then withdraw amount account
     else account
 
-processCommand openingAccount ('w', 100M)
+processCommand openingAccount ('d', 80M)
 
 
 let commands = [ 'd'; 'w'; 'z'; 'f'; 'd'; 'x'; 'w' ]
@@ -59,5 +60,18 @@ let commands = [ 'd'; 'w'; 'z'; 'f'; 'd'; 'x'; 'w' ]
 commands
 |> Seq.filter isValidCommand
 |> Seq.takeWhile (not << isStopCommand)
-|> Seq.map getAmount
+|> Seq.map getAmountConsole
+|> Seq.fold processCommand openingAccount
+
+let consoleCommands =
+    seq {
+        while true do
+            Console.Write "(d)eposit, (w)ithdraw or e(x)it: "
+            yield Console.ReadKey().KeyChar
+    }
+
+consoleCommands
+|> Seq.filter isValidCommand
+|> Seq.takeWhile (not << isStopCommand)
+|> Seq.map getAmountConsole
 |> Seq.fold processCommand openingAccount
