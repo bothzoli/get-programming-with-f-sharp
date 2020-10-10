@@ -4,6 +4,7 @@ open System
 
 open Capstone3.Domain
 open Capstone3.Operations
+open Capstone3.FileRepository
 
 let isValidCommand command =
     [ 'd'; 'w'; 'x' ] |> Seq.contains command
@@ -40,10 +41,7 @@ let main _ =
         Console.Write "Please enter your name: "
         Console.ReadLine()
 
-    let openingAccount =
-        { Owner = { Name = name }
-          Balance = 0M
-          AccountId = Guid() }
+    let openingAccount = loadAccount name
 
     let closingAccount =
         consoleCommands

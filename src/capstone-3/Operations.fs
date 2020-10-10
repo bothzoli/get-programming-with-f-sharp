@@ -15,6 +15,11 @@ let deposit amount account =
     { account with
           Balance = account.Balance + amount }
 
+let processTransaction account transaction =
+    if transaction.Operation = "deposit" then deposit transaction.Amount account
+    elif transaction.Operation = "withdraw" then withdraw transaction.Amount account
+    else account
+
 let auditAs operationName audit operation amount account =
     let audit =
         audit account.AccountId account.Owner.Name

@@ -7,6 +7,7 @@ open System.IO
 
 open Capstone3.Operations
 open Capstone3.Domain
+open Capstone3.Domain.Transaction
 open Capstone3.FileRepository
 
 let openingAccount =
@@ -75,3 +76,46 @@ consoleCommands
 |> Seq.takeWhile (not << isStopCommand)
 |> Seq.map getAmountConsole
 |> Seq.fold processCommand openingAccount
+
+let deposit100 =
+    { Timestamp = DateTime.Now.AddDays -2.0
+      Operation = "deposit"
+      Amount = 100M
+      Accepted = true }
+
+let withdraw70 =
+    { Timestamp = DateTime.Now.AddDays -1.0
+      Operation = "withdraw"
+      Amount = 70M
+      Accepted = true }
+
+let processTransaction account transaction =
+    if transaction.Operation = "deposit" then deposit transaction.Amount account
+    elif transaction.Operation = "withdraw" then withdraw transaction.Amount account
+    else account
+
+processTransaction openingAccount deposit100
+
+processTransaction openingAccount withdraw70
+// let getAccountId owner =
+//     let accountFolder = findAccountFolder owner
+//     if accountFolder = ""
+//     then Guid.NewGuid()
+//     else accountFolder.Split('_').[1] |> Guid.Parse
+// getAccountId "Sam"
+// let getAccountHistory path =
+//     if Directory.Exists path then (Directory.GetFiles path) |> Array.toSeq else Seq.empty
+// let getTransactions owner =
+//     buildPath (owner, getAccountId owner)
+//     |> getAccountHistory
+//     |> Seq.map (File.ReadAllText >> deserialized)
+//     |> Seq.filter (fun trx -> trx.Accepted)
+// getTransactions "Sam"
+// let loadAccount name =
+//     let openingAccount =
+//         { Owner = { Name = name }
+//           Balance = 0M
+//           AccountId = getAccountId name }
+//     getTransactions name
+//     |> Seq.fold processTransaction openingAccount
+// loadAccount "Sam"
