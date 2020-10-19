@@ -1,5 +1,6 @@
 .ionide
 .fake
+sample/
 
 **/obj
 **/bin
