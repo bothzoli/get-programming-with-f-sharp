@@ -12,7 +12,7 @@ let depositWithAudit =
 
 let loadAccountFromDisk =
     FileRepository.findTransactionsOnDisk
-    >> Operations.loadAccount
+    >> loadAccount
 
 [<AutoOpen>]
 module CommandParsing =

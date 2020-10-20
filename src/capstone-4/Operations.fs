@@ -17,16 +17,11 @@ let deposit amount account =
 let auditAs operationName audit operation amount account =
     let updatedAccount = operation amount account
 
-    let accountIsUnchanged = (updatedAccount = account)
-
     let transaction =
-        let transaction =
-            { Operation = operationName
-              Amount = amount
-              Timestamp = DateTime.UtcNow
-              Accepted = true }
-
-        if accountIsUnchanged then { transaction with Accepted = false } else transaction
+        { Operation = operationName
+          Amount = amount
+          Timestamp = DateTime.UtcNow
+          Accepted = (updatedAccount <> account) }
 
     audit account.AccountId account.Owner.Name transaction
     updatedAccount
