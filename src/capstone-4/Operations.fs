@@ -39,3 +39,8 @@ let loadAccount (owner, accountId, transactions) =
         | "withdraw" -> account |> withdraw txn.Amount
         | "deposit" -> account |> deposit txn.Amount
         | _ -> account) openingAccount
+
+let loadAccountOptional value =
+    match value with
+    | Some (value) -> Some(loadAccount value)
+    | None -> None

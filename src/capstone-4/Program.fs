@@ -10,9 +10,9 @@ let withdrawWithAudit =
 let depositWithAudit =
     auditAs "deposit" Auditing.composedLogger deposit
 
-let loadAccountFromDisk =
-    FileRepository.findTransactionsOnDisk
-    >> loadAccount
+let tryLoadAccountFromDisk =
+    FileRepository.tryFindTransactionsOnDisk
+    >> loadAccountOptional
 
 [<AutoOpen>]
 module CommandParsing =
@@ -38,16 +38,25 @@ module UserInput =
                 Console.WriteLine()
         }
 
-    let getAmount command =
+    let tryGetAmount command =
         Console.WriteLine()
         Console.Write "Enter Amount: "
-        command, Console.ReadLine() |> Decimal.Parse
+        let amount = Console.ReadLine() |> Decimal.TryParse
+        match amount with
+        | true, amount -> Some(command, amount)
+        | false, _ -> None
 
 [<EntryPoint>]
 let main _ =
     let openingAccount =
         Console.Write "Please enter your name: "
-        Console.ReadLine() |> loadAccountFromDisk
+        let owner = Console.ReadLine()
+        match owner |> tryLoadAccountFromDisk with
+        | Some account -> account
+        | None ->
+            { AccountId = Guid.NewGuid()
+              Balance = 0M
+              Owner = { Name = owner } }
 
     printfn "Current balance is £%M" openingAccount.Balance
 
@@ -67,7 +76,7 @@ let main _ =
         |> Seq.choose tryParseCommand
         |> Seq.takeWhile ((<>) Exit)
         |> Seq.choose tryGetBankOperation
-        |> Seq.map getAmount
+        |> Seq.choose tryGetAmount
         |> Seq.fold processCommand openingAccount
 
     printfn ""
