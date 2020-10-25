@@ -9,6 +9,11 @@ type Account =
       Owner: Customer
       Balance: decimal }
 
+type Command =
+    | Deposit
+    | Withdraw
+    | Exit
+
 type Transaction =
     { Timestamp: DateTime
       Operation: string

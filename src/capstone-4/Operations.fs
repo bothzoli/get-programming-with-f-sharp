@@ -35,5 +35,7 @@ let loadAccount (owner, accountId, transactions) =
     transactions
     |> Seq.sortBy (fun txn -> txn.Timestamp)
     |> Seq.fold (fun account txn ->
-        if txn.Operation = "withdraw" then account |> withdraw txn.Amount else account |> deposit txn.Amount)
-           openingAccount
+        match txn.Operation with
+        | "withdraw" -> account |> withdraw txn.Amount
+        | "deposit" -> account |> deposit txn.Amount
+        | _ -> account) openingAccount
