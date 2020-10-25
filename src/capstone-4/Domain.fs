@@ -9,9 +9,12 @@ type Account =
       Owner: Customer
       Balance: decimal }
 
-type Command =
+type BankOperation =
     | Deposit
     | Withdraw
+
+type Command =
+    | AccountCommand of BankOperation
     | Exit
 
 type Transaction =

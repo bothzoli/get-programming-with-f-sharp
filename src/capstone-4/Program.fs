@@ -18,13 +18,15 @@ let loadAccountFromDisk =
 module CommandParsing =
     let tryParseCommand cmd =
         match cmd with
-        | 'd' -> Some Deposit
-        | 'w' -> Some Withdraw
+        | 'd' -> Some(AccountCommand Deposit)
+        | 'w' -> Some(AccountCommand Withdraw)
         | 'x' -> Some Exit
         | _ -> None
 
-    let isValidCommand cmd = [ 'd'; 'w'; 'x' ] |> List.contains cmd
-    let isStopCommand = (=) 'x'
+    let tryGetBankOperation cmd =
+        match cmd with
+        | AccountCommand op -> Some op
+        | Exit -> None
 
 [<AutoOpen>]
 module UserInput =
@@ -56,7 +58,6 @@ let main _ =
             match command with
             | Deposit -> account |> depositWithAudit amount
             | Withdraw -> account |> withdrawWithAudit amount
-            | Exit -> account
 
         printfn "Current balance is £%M" account.Balance
         account
@@ -65,6 +66,7 @@ let main _ =
         commands
         |> Seq.choose tryParseCommand
         |> Seq.takeWhile ((<>) Exit)
+        |> Seq.choose tryGetBankOperation
         |> Seq.map getAmount
         |> Seq.fold processCommand openingAccount
 
