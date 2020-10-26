@@ -9,6 +9,12 @@ type Account =
       Owner: Customer
       Balance: decimal }
 
+type CreditAccount = CreditAccount of Account
+
+type RatedAccount =
+    | InCredit of CreditAccount
+    | Overdrawn of Account
+
 type BankOperation =
     | Deposit
     | Withdraw
@@ -20,12 +26,11 @@ type Command =
 type Transaction =
     { Timestamp: DateTime
       Operation: string
-      Amount: decimal
-      Accepted: bool }
+      Amount: decimal }
 
 module Transactions =
     let serialize transaction =
-        sprintf "%O***%s***%M***%b" transaction.Timestamp transaction.Operation transaction.Amount transaction.Accepted
+        sprintf "%O***%s***%M" transaction.Timestamp transaction.Operation transaction.Amount
 
     let deserialize (fileContents: string) =
         let parts =
@@ -33,5 +38,4 @@ module Transactions =
 
         { Timestamp = DateTime.Parse parts.[0]
           Operation = parts.[1]
-          Amount = Decimal.Parse parts.[2]
-          Accepted = Boolean.Parse parts.[3] }
+          Amount = Decimal.Parse parts.[2] }

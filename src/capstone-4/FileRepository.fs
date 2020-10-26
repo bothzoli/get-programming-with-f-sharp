@@ -45,6 +45,6 @@ let writeTransaction accountId owner transaction =
         sprintf "%s/%d.txt" path (transaction.Timestamp.ToFileTimeUtc())
 
     let line =
-        sprintf "%O***%s***%M***%b" transaction.Timestamp transaction.Operation transaction.Amount transaction.Accepted
+        sprintf "%O***%s***%M" transaction.Timestamp transaction.Operation transaction.Amount
 
     File.WriteAllText(filePath, line)

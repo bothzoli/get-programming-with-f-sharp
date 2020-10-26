@@ -5,7 +5,7 @@ open Capstone4.Domain
 open Capstone4.Operations
 
 let withdrawWithAudit =
-    auditAs "withdraw" Auditing.composedLogger withdraw
+    auditAs "withdraw" Auditing.composedLogger withdrawSafe
 
 let depositWithAudit =
     auditAs "deposit" Auditing.composedLogger deposit
@@ -57,8 +57,11 @@ let main _ =
             { AccountId = Guid.NewGuid()
               Balance = 0M
               Owner = { Name = owner } }
+            |> classifyBankAccount
 
-    printfn "Current balance is £%M" openingAccount.Balance
+    match openingAccount with
+    | InCredit (CreditAccount account) -> printfn "Current balance is £%M" account.Balance
+    | Overdrawn account -> printfn "Current balance is £%M" account.Balance
 
     let processCommand account (command, amount) =
         printfn ""
@@ -68,7 +71,12 @@ let main _ =
             | Deposit -> account |> depositWithAudit amount
             | Withdraw -> account |> withdrawWithAudit amount
 
-        printfn "Current balance is £%M" account.Balance
+        let balance =
+            match account with
+            | InCredit (CreditAccount account) -> account.Balance
+            | Overdrawn (account) -> account.Balance
+
+        printfn "Current balance is £%M" balance
         account
 
     let closingAccount =
