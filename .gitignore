@@ -1,5 +1,6 @@
 .ionide
 .fake
+.vs
 sample/
 
 **/obj
